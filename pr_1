@@ -1,0 +1,466 @@
+#include <iostream>
+#include <unistd.h>
+#include <cstdlib>
+#include <iomanip>
+
+using namespace std;
+
+const int rows = 6;
+const int cols = 6;
+
+void intToFloatMatrix(const int* intMatrix, float* floatMatrix, size_t rows, size_t cols) {
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            *(floatMatrix + i * cols + j) = static_cast<float>(*(intMatrix + i * cols + j));
+        }
+    }
+}
+
+void plusNumber(int* arr, int rows, int cols, int n) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(arr + i * cols + j) += n;
+        }
+    }
+}
+
+void minusNumber(int* arr, int rows, int cols, int n) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(arr + i * cols + j) -= n;
+        }
+    }
+}
+
+void multiplyNumber(int* arr, int rows, int cols, int n) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(arr + i * cols + j) *= n;
+        }
+    }
+}
+
+void shareNumber(float* f_arr, int rows, int cols, int n) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(f_arr + i * cols + j) /= n;
+        }
+    }
+
+    cout << "Измененная матрица: " << endl;
+    cout << fixed << setprecision(1); 
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            cout << left << setw(10) << *(f_arr + i * cols + j); 
+            usleep(50000);
+        }
+        cout << endl;
+    }
+}
+
+void fillSpiral(int* arr, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(arr + i * cols + j) = 1 + rand() % (rows * cols);
+        }
+    }
+}
+
+void straightArray(int(*arr)[cols], int* flatArray) {
+    int index = 0;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(flatArray + index++) = *(*(arr + i) + j);
+        }
+    }
+}
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void quickSort(int* arr, int start, int end) {
+    if (start >= end) return;
+
+    int f = start;
+    int l = end;
+    int mid = *(arr + (f + l) / 2);
+
+    while (f <= l) {
+        while (*(arr + f) < mid) f++;
+        while (*(arr + l) > mid) l--;
+
+        if (f <= l) {
+            swap(arr + f, arr + l);
+            f++;
+            l--;
+        }
+    }
+    quickSort(arr, start, l);
+    quickSort(arr, f, end);
+
+}
+
+void insertionSort(int* arr, int n) {
+    int i, j, key;
+
+    for (i = 1; i < n; i++) {
+        key = *(arr + i);
+        j = i - 1;
+
+        while (j >= 0 && *(arr + j) > key) {
+            *(arr + j + 1) = *(arr + j);
+            j--;
+        }
+        *(arr + j + 1) = key;
+    }
+}
+
+void combSort(int* arr, int n) {
+    float k = 1.247;
+    int s = n - 1;
+
+    while (s >= 1) {
+        for (int i = 0; i + s < n; i++) {
+            if (*(arr + i) > *(arr + i + s)) {
+                swap(*(arr + i), *(arr + i + s));
+            }
+        }
+        s /= k;
+    }
+}
+
+void cocktailSort(int* arr, int n) {
+    bool swapped = true;
+    int start = 0;
+    int end = n - 1;
+
+    while (swapped) {
+        swapped = false;
+
+        for (int i = start; i < end; i++) {
+            if (*(arr + i) > *(arr + i + 1)) {
+                swap(*(arr + i), *(arr + i + 1));
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break;
+        }
+        end--;
+
+        for (int i = end; i >= start; i--) {
+            if (*(arr + i) > *(arr + i + 1)) {
+                swap(*(arr + i), *(arr + i + 1));
+                swapped = true;
+            }
+        }
+        start++;
+    }
+}
+
+
+
+void bubbleSort(int* arr, int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (*(arr + j) > *(arr + j + 1)) {
+                swap(*(arr + j), *(arr + j + 1));
+            }
+        }
+    }
+}
+
+
+
+
+
+void fillSpiralSorted(int (*arr)[cols]) {
+    int flatArray[rows * cols];
+
+    straightArray(arr, flatArray);
+    quickSort(flatArray,0, rows * cols - 1);
+
+    int index = 0;
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            *(*(arr + i) + j) = *(flatArray + index++);
+        }
+    }
+}
+
+void setCursorPosition(int x, int y) {
+    cout << "\033[" << y << ";" << x << "H";
+}
+
+void printMatrix(int arr[][cols], int rows, int cols) {
+    int* ptr = (int*)arr; 
+
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            cout << *(ptr + i * cols + j) << " ";
+            usleep(50000);   
+        }
+        cout << endl;
+    }
+}
+
+void printSpiral(int arr[][cols], int rows, int cols) {
+    system("clear");
+    int top = 0, bottom = rows - 1;
+    int left = 0, right = cols - 1;
+    
+    int* ptr = (int*)arr;
+
+    while (top <= bottom && left <= right) {
+        for (int i = left; i <= right; i++) {
+            setCursorPosition(i * 4, top + 1);
+            cout << *(ptr + top * cols + i);
+            cout.flush();
+            usleep(300000);
+        }
+        top++;
+
+        for (int i = top; i <= bottom; i++) {
+            setCursorPosition(right * 4, i + 1);
+            cout << *(ptr + i * cols + right); 
+            cout.flush();
+            usleep(300000);
+        }
+        right--;
+
+        if (top <= bottom) {
+            for (int i = right; i >= left; i--) {
+                setCursorPosition(i * 4, bottom + 1);
+                cout << *(ptr + bottom * cols + i);
+                cout.flush();
+                usleep(300000);
+            }
+            bottom--;
+        }
+
+        if (left <= right) {
+            for (int i = bottom; i >= top; i--) {
+                setCursorPosition(left * 4, i + 1);
+                cout << *(ptr + i * cols + left);
+                cout.flush();
+                usleep(300000);
+            }
+            left++;
+        }
+    }
+    
+    setCursorPosition(0, rows + 2);
+}
+void printSnake(int arr[][cols], int rows, int cols) {
+    system("clear");
+    
+    int* ptr = (int*)arr;
+
+    for (int j = 0; j < cols; j++) {
+        if (j % 2 == 0) {
+            for (int i = 0; i < rows; i++) {
+                setCursorPosition(j * 4, i + 1);
+                cout << *(ptr + i * cols + j); 
+                cout.flush();
+                usleep(150000);
+            }
+        } else {
+            for (int i = rows - 1; i >= 0; i--) {
+                setCursorPosition(j * 4, i + 1);
+                cout << *(ptr + i * cols + j);
+                cout.flush();
+                usleep(300000);
+            }
+        }
+    }
+    
+    setCursorPosition(0, rows + 2);
+}
+
+void change_A(int (*arr)[cols])
+{
+    int blockSize = rows / 2;
+    int temp[rows][cols];
+    for (int i = 0; i < blockSize; ++i) {
+        for (int j = 0; j < blockSize; ++j) {
+            *(*(temp + i) + (j + blockSize)) = *(*(arr + i) + j);
+            *(*(temp + (i + blockSize)) + (j + blockSize)) = *(*(arr + i) + (j + blockSize));
+            *(*(temp + (i + blockSize)) + j) = *(*(arr + (i + blockSize)) + (j + blockSize));
+            *(*(temp + i) + j) = *(*(arr + (i + blockSize)) + j);
+        }
+    }
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            *(*(arr + i) + j) = *(*(temp + i) + j);
+        }
+    }
+}
+
+void change_B(int (*arr)[cols]) {
+    int blockSize = rows / 2;
+    int new_arr[rows][cols];
+
+    for (int i = 0; i < blockSize; ++i) {
+        for (int j = 0; j < blockSize; ++j) {
+            *(*(new_arr + (i + blockSize)) + (j + blockSize)) = *(*(arr + i) + j);
+            *(*(new_arr + i) + j) = *(*(arr + (i + blockSize)) + (j + blockSize));
+            *(*(new_arr + (i + blockSize)) + j) = *(*(arr + i) + (j + blockSize));
+            *(*(new_arr + i) + (j + blockSize)) = *(*(arr + (i + blockSize)) + j);
+        }
+    }
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            *(*(arr + i) + j) = *(*(new_arr + i) + j);
+        }
+    }
+}
+
+void change_C(int (*arr)[cols]) {
+    int blockSize = rows / 2;
+    int new_arr[rows][cols];
+    for (int i = 0; i < blockSize; ++i) {
+        for (int j = 0; j < blockSize; ++j) {
+            *(*(new_arr + (i + blockSize)) + j) = *(*(arr + i) + j);
+            *(*(new_arr + i) + j) = *(*(arr + (i + blockSize)) + j);
+            *(*(new_arr + (i + blockSize)) + (j + blockSize)) = *(*(arr + i) + (j + blockSize));
+            *(*(new_arr + i) + (j + blockSize)) = *(*(arr + (i + blockSize)) + (j + blockSize));
+        }
+    }
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            *(*(arr + i) + j) = *(*(new_arr + i) + j);
+        }
+    }
+}
+
+void change_D(int (*arr)[cols]) {
+    int blockSize = rows / 2;
+    int new_arr[rows][cols];
+    for (int i = 0; i < blockSize; ++i) {
+        for (int j = 0; j < blockSize; ++j) {
+            *(*(new_arr + i) + (j + blockSize)) = *(*(arr + i) + j);
+            *(*(new_arr + i) + j) = *(*(arr + i) + (j + blockSize));
+            *(*(new_arr + (i + blockSize)) + (j + blockSize)) = *(*(arr + (i + blockSize)) + j);
+            *(*(new_arr + (i + blockSize)) + j) = *(*(arr + (i + blockSize)) + (j + blockSize));
+        }
+    }
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            *(*(arr + i) + j) = *(*(new_arr + i) + j);
+        }
+    }
+}
+
+
+
+int main(){
+    int arr[rows][cols];
+    float f_arr[rows][cols];
+    system ("clear");
+    bool flag = true;
+    while (flag) {
+        cout << endl;
+        cout << "Введите номер задания (1-4): ";
+        int task;
+        cin >> task;
+        cout << endl;
+        switch(task){
+            case 1:{
+                cout << "Выберите вывод (1 - спираль, 2 - змейка): ";
+                int conclusion;
+                cin >> conclusion;
+                fillSpiral(&arr[0][0], rows, cols);
+                if(conclusion == 1){
+                    printSpiral(arr, rows, cols);
+                } else {
+                    printSnake(arr, rows, cols);
+                }
+                break;
+            }
+            case 2:{
+                cout<<"Выберите перестановку(1/2/3/4): ";
+                int permutation;
+                cin >> permutation;
+                if (permutation == 1){
+                    cout << endl << endl;
+                    cout << "Поворот блоков:\n"; 
+                    usleep(2000000);
+                    change_A(arr);
+                    printMatrix(arr, rows, cols);
+                }
+                if (permutation == 2){
+                    cout << endl << endl;
+                    cout << "Поворот блоков:\n"; 
+                    usleep(2000000);
+                    change_B(arr);
+                    printMatrix(arr, rows, cols);
+                }
+                if (permutation == 3){
+                    cout << endl << endl;
+                    cout << "Поворот блоков:\n"; 
+                    usleep(2000000);
+                    change_C(arr);
+                    printMatrix(arr, rows, cols);
+                }
+                if (permutation == 4){
+                    cout << endl;
+                    cout << "Поворот блоков:\n"; 
+                    usleep(2000000);
+                    change_D(arr);
+                    printMatrix(arr, rows, cols);
+                }
+                break;
+            }
+            case 3:{
+                cout << "Отсортированный массив: "<< endl;
+                fillSpiralSorted(arr);
+                printMatrix(arr, rows, cols);
+                break;
+            }
+            case 4:{
+                cout << "Выберите действие (1 - плюс, 2 - минус, 3 - умножение, 4 - деление): ";
+                int operation;
+                cin >> operation;
+                cout << endl;
+                if (operation == 1){
+                    cout << "Ввдеите число, на которое увеличится каждое число матрицы: ";
+                    int n;
+                    cin >> n;
+                    plusNumber(&arr[0][0], rows, cols, n);
+                    cout << "Измененная матрица: " << endl;
+                    printMatrix(arr, rows, cols);
+                }
+                if (operation == 2){
+                    cout << "Ввдеите число, на которое уменьшится каждое число матрицы: ";
+                    int n;
+                    cin >> n;
+                    minusNumber(&arr[0][0], rows, cols, n);
+                    cout << "Измененная матрица: " << endl;
+                    printMatrix(arr, rows, cols);
+                }
+                if (operation == 3){
+                    cout << "Ввдеите число, на которое умножится каждое число матрицы: ";
+                    int n;
+                    cin >> n;
+                    multiplyNumber(&arr[0][0], rows, cols, n);
+
+                    cout << "Измененная матрица: " << endl;
+                    printMatrix(arr, rows, cols);
+                }
+                if (operation == 4){
+                    cout << "Ввдеите число, на которое поделится каждое число матрицы: ";
+                    int n;
+                    cin >> n;
+                    intToFloatMatrix(&arr[0][0], &f_arr[0][0], rows, cols);
+                    shareNumber(&f_arr[0][0], rows, cols, n);
+                }
+                
+            }
+        }
+    }
+}
